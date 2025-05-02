@@ -6,8 +6,8 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git
-cd YOUR-REPO-NAME
+git clone https://github.com/G-Pavithra8/AI-Powered-Rainfall-Prediction-System.git
+cd AI-Powered-Rainfall-Prediction-System
 ```
 
 ### 2. Backend Setup
@@ -35,12 +35,6 @@ npm start
 
 ---
 
-## 📊 Screenshots
-
-![RainPredict Dashboard](./screenshots/dashboard.png)
-![RainPredict About](./screenshots/about.png)
-
----
 
 ## 🧠 How It Works
 
@@ -54,7 +48,7 @@ npm start
 
 ## ✨ Credits
 
-- Built with ❤️ by [Your Name]
+- Built with ❤️ by Pavithra
 - Powered by [OpenWeather](https://openweathermap.org/) and open-source technologies
 
 ---
