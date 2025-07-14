@@ -1,6 +1,6 @@
 import './index.css'; // or './App.css' if that's where you put the Tailwind imports
-import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import TopNav from './components/TopNav';
 import MainDashboard from './pages/MainDashboard';
 import Login from './pages/Login';
@@ -8,30 +8,28 @@ import Signup from './pages/SignUp';
 import About from './pages/About';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [users, setUsers] = useState([]); // [{email, password}]
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('userEmail'));
+  const navigate = useNavigate();
 
-  const handleLogin = (email, password) => {
-    // Check if user exists
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-      setIsAuthenticated(true);
-      return true;
-    }
-    return false;
-  };
+  // Listen for changes in localStorage (for multi-tab support)
+  useEffect(() => {
+    const onStorage = () => setIsAuthenticated(!!localStorage.getItem('userEmail'));
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
 
-  const handleSignup = (email, password) => {
-    // Check if user already exists
-    if (users.find(u => u.email === email)) {
-      return false; // User already exists
-    }
-    setUsers([...users, { email, password }]);
+  // Pass these handlers to children
+  const handleLogin = (email) => {
+    localStorage.setItem('userEmail', email);
     setIsAuthenticated(true);
-    return true;
+    navigate('/');
   };
 
-  const handleLogout = () => setIsAuthenticated(false);
+  const handleLogout = () => {
+    localStorage.removeItem('userEmail');
+    setIsAuthenticated(false);
+    navigate('/login');
+  };
 
   return (
     <>
@@ -52,7 +50,7 @@ function App() {
           element={
             isAuthenticated
               ? <Navigate to="/" />
-              : <Signup onSignup={handleSignup} />
+              : <Signup onLogin={handleLogin} />
           }
         />
         <Route path="/about" element={<About />} />

@@ -6,11 +6,23 @@ const Login = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = onLogin(email, password);
-    if (!success) {
-      setError('Invalid email or password, or user does not exist.');
+    setError('');
+    try {
+      const response = await fetch('http://localhost:5001/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await response.json();
+      if (data.success) {
+        onLogin(email); // Use the handler from App.js to update auth state and navigate
+      } else {
+        setError(data.message || 'Login failed.');
+      }
+    } catch (err) {
+      setError('Server error. Please try again later.');
     }
   };
 
