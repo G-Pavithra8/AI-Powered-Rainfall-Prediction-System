@@ -1,19 +1,17 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Blueprint, request, jsonify
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
-app = Flask(__name__)
-CORS(app)
+auth_bp = Blueprint('auth', __name__)
 
-# MongoDB setup
+# MongoDB setup (move this to app.py if you want a single client)
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
 client = MongoClient(MONGO_URI)
 db = client['auth_db']
 users_collection = db['users']
 
-@app.route('/signup', methods=['POST'])
+@auth_bp.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
     email = data.get('email')
@@ -26,7 +24,7 @@ def signup():
     users_collection.insert_one({'email': email, 'password': hashed_password})
     return jsonify({'success': True, 'message': 'User registered successfully.'})
 
-@app.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     email = data.get('email')
@@ -39,7 +37,4 @@ def login():
     if check_password_hash(user['password'], password):
         return jsonify({'success': True, 'message': 'Login successful.', 'email': email})
     else:
-        return jsonify({'success': False, 'message': 'Invalid password.'}), 401
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True) 
+        return jsonify({'success': False, 'message': 'Invalid password.'}), 401 

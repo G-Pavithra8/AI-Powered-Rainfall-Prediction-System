@@ -21,6 +21,7 @@ from utils.weather_utils import (
     get_seasonal_features
 )
 from dateutil.relativedelta import relativedelta
+from auth import auth_bp  # Import the blueprint
 
 # Load environment variables
 load_dotenv()
@@ -31,6 +32,9 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
+
+# Register the auth blueprint
+app.register_blueprint(auth_bp)
 
 # Define custom objects for model loading
 custom_objects = {
